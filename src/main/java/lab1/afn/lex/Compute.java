@@ -7,9 +7,9 @@ import lab1.afn.preafn.infpos;
 import java.io.*;
 public class Compute {
 
-
-
-
+    public static String idk;
+    static HashMap<String, String> finalIDs;
+    static String postFix;
 
 
 
@@ -199,7 +199,7 @@ public class Compute {
             String current;
             HashMap<String, String> operators = vars.get(0);
             HashMap<String, String> ids = vars    .get(1);
-            HashMap<String, String> finalIDs = new HashMap<String, String>();
+            finalIDs = new HashMap<String, String>();
             int finalIndex = 10000000;
             String allRaw = "";
             while ((current = reader.readLine()) != null) {
@@ -302,12 +302,19 @@ public class Compute {
             
           
             String fromatted = TreeLex.formatTree(allRaw, '$');
-            String postFix = infpos.special(fromatted, '$');
+            postFix = infpos.special(fromatted, '$');
             TreeLex tree = new TreeLex(postFix, '$', finalIDs);
+            
+            
             reader.close();
+            
     }
-    public static void computeTheVoid(String file) throws InterruptedException, IOException{
+    public static void computeTheVoid(String file,String file2) throws InterruptedException, IOException{
         String dir = "C:\\Users\\ravz2\\Escritorio\\afn\\src\\main\\java\\lab1\\afn\\lex\\"+file+".yal";
+        String dir2= "C:\\Users\\ravz2\\Escritorio\\afn\\src\\main\\java\\lab1\\afn\\lex\\"+file2+".yal.run";
         computeTokens(dir,computeVars(dir));
+        TreeLex tree = new TreeLex(postFix, '$', finalIDs);
+        idk=tree.readRun(dir2, postFix);
     }
+    //readRun("C:\\Users\\ravz2\\Escritorio\\afn\\src\\main\\java\\lab1\\afn\\lex\\slr-4.2.yal.run", postfix);
 }

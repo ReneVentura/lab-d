@@ -414,20 +414,51 @@ import java.io.FileWriter;
       return this.transitionsResult; 
   }
 
-  public boolean accepts(String input) {
-    String a="";
-    for (int i=0 ;i< transtitions.size();i++){
-        HashMap<String,Integer> myMap= transtitions.get(i);
-        for (Map.Entry<String, Integer> entry : myMap.entrySet()) {
-      //      if (entry.getValue() == input) {}
-                // If the value matches the value we're looking for, return the corresponding key
-                String key = entry.getKey();
-                Integer e= entry.getValue();
-                System.out.println("Key: " + key);
+  public String accepts(String input, Map<String, String> map) {
+    String answer="";
+    String newS = input;
+    for(int i=0; i<input.length();i++){
+        for (Map.Entry<String, String> entry : map.entrySet()) {
+            if (entry.getValue().equals(Character.toString(input.charAt(i)))) {
+                answer+=input.charAt(i)+" "+ entry.getKey()+"\n";
+                newS = newS.replace(Character.toString(input.charAt(i)), " ");
+            }
+            else if(i+1<input.length()){
+                if(entry.getValue().equals(Character.toString(input.charAt(i))+Character.toString(input.charAt(i+1)))){
+                    answer+=Character.toString(input.charAt(i))+Character.toString(input.charAt(i+1))+" "+ entry.getKey()+"\n";
+                    newS = newS.replace(Character.toString(input.charAt(i))+Character.toString(input.charAt(i+1)), " ");
+                }
+            }
+             
+        }
+    }
+    String[]l= newS.split(" ");
+    String t="";
+    for(int i =0;i< l.length;i++){
+        for (HashMap<String, Integer> innerMap : transtitions.values()) {
+            int matchingValues = 0;
+            for (String key : innerMap.keySet()) {
+             for(int j=0;j<l[i].length();j++){
+                if (l[i].charAt(j)==(key.charAt(0))&&key.length()==1) {
+                    
+                    matchingValues++;
+                    if (matchingValues >= l[i].length()) {
+                        if(!Character.isDigit(innerMap.keySet().iterator().next().charAt(0)))
+                       {
+                        t+=l[i]+" "+ innerMap.keySet().iterator().next()+"\n";
+                       }
+                        
+                        //return innerMap.getKey();
+                    }
+                    
+                }
+             }
+                
             }
         }
+    }
    
-
-    return true;
+    // The input string didn't match any IDs, so we return null to indicate an error
+        return answer+"\n"+t;
   }
     }

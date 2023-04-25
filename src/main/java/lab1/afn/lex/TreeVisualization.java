@@ -29,9 +29,10 @@ import java.util.Map;
 public class TreeVisualization {
     public static void main(String[] args) throws InterruptedException, IOException {
         // Create a directed weighted graph
-        Compute.computeTheVoid("slr-4");
+        Compute.computeTheVoid("slr-2","slr-2.1");
         DefaultDirectedGraph<String, DefaultEdge> graph =TreeLex.graphTree;
-
+        String idk= Compute.idk;
+        System.out.println(idk);
         JGraphXAdapter<String, DefaultEdge> jgxAdapter = new JGraphXAdapter<>(graph);
 
         // Hide edge labels

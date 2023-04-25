@@ -18,6 +18,8 @@ import com.mxgraph.layout.mxParallelEdgeLayout;
 import com.mxgraph.layout.hierarchical.mxHierarchicalLayout;
 import com.mxgraph.swing.mxGraphComponent;
 import java.awt.Dimension;
+import java.io.BufferedReader;
+import java.io.FileReader;
 import java.io.IOException;
 
 import com.mxgraph.util.mxConstants;
@@ -31,16 +33,20 @@ public class TreeLex {
     TreeLeaf root;
     Set<Character>operators;
     HashMap<String,String> ids;
+    Character concat;
+    public static String la2="";
     public static DefaultDirectedGraph<String, DefaultEdge> graphTree = new DefaultDirectedGraph<>(DefaultEdge.class);
 
-    public TreeLex(String postfix, Character concat,HashMap<String,String>ids){
+    public TreeLex(String postfix, Character concat,HashMap<String,String>ids) throws InterruptedException, IOException{
         operators= new HashSet<Character>(); 
         operators.add('*');
         operators.add('|');
         operators.add('^');
         operators.add(concat);
         this.ids=ids;
+        this.concat=concat;
         createTree(postfix);
+        //readRun("C:\\Users\\ravz2\\Escritorio\\afn\\src\\main\\java\\lab1\\afn\\lex\\slr-4.2.yal.run", postfix);
     }
 
     public void createTree(String postfix){
@@ -122,7 +128,7 @@ public class TreeLex {
         ArrayList<TreeLeaf>queue= new ArrayList<TreeLeaf>();
         queue.add(root);
         String la="";
-        String la2="";
+        
         int ID= 0;
         int aux=0;
         String prev="";
@@ -158,11 +164,9 @@ public class TreeLex {
         
             System.out.println(source +"--> " + target);
         }
-       System.out.println(postfix); 
-       ToDfa df= new ToDfa(postfix);
-   
-       System.out.println(df.getTransitionsResult().toString());
-       df.accepts("9");
+
+
+     
     }
 
     public static String formatTree(String tree, Character concat){
@@ -205,4 +209,57 @@ public class TreeLex {
         result += tree.charAt(tree.length() - 1);
         return result;
     }
+
+
+    public Map<String, String> MapTheThing(){
+        la2= la2.replace(Character.toString(concat), "");
+        String[] substrings = la2.split("\\|");
+        Map<String, String> map = new HashMap<>();
+
+        for (String substring : substrings) {
+            String key = "";
+            String value = "";
+            String trimmed = substring.trim();
+            if (!trimmed.isEmpty()) { // skip empty substrings
+                String[] parts = trimmed.split("\\s+");
+                if (parts.length >= 2) {
+                    for(int i=0; i<parts[1].length();i++){
+                        if(!Character.isDigit(parts[1].charAt(i))){
+                            key = parts[0];
+                            value = parts[1];
+                        }
+                    }
+                    if(key!="" && value!=""){
+                        map.put(key, value);
+
+                    }
+                }
+            }
+        }
+        for (String value : map.values()) {
+            if (value.equals("zero")) {
+                // Replace the value with null
+                for (Map.Entry<String, String> entry : map.entrySet()) {
+                    if (entry.getValue().equals(value)) {
+                        entry.setValue(" ");
+                    }
+                }
+            }
+        }
+        return map;
+    }
+    public String readRun(String path, String postfix)throws InterruptedException, IOException{
+        String current;
+        String answer="";
+        BufferedReader reader = new BufferedReader(new FileReader(path));
+        while ((current = reader.readLine()) != null) {
+            answer+= current+" ";
+        }
+        Map<String, String> map= MapTheThing();
+        ToDfa dfa= new ToDfa(postfix);
+        String finall= dfa.accepts(answer, map);
+        reader.close();
+        return finall;
+    }
+   
 }
